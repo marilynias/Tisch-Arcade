@@ -1,2 +1,4 @@
 
 *.log
+*.csproj
+Game Selector/Assembly-CSharp.csproj

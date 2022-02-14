@@ -16,73 +16,30 @@ public class Import_games : MonoBehaviour
 
     public GameObject bttn_prefab;
 
-    public string key;
+    public Camera camera;
 
 
 
     // Start is called before the first frame update
     void Start()
     {
-        bttn_prefab.transform.SetParent(parent.transform);
-        //string bttn_prefab.filepath = "test";
-
-
-        string gamepath = Path.Combine(@"P:", "Python");
+        // vars
         string[] a_ext = { ".py", ".txt" };
-        List<string> allowed_ext = new List<string>(a_ext);
+        List<string> allowed_ext = new List<string>(a_ext);    
+        //int posx = -100;
+        //int posy = 10;
+
+
+        // Main
+        bttn_prefab.transform.SetParent(parent.transform);
+        // get a List of all paths to Files that can be executed
+        List<string> filepaths = Get_files_to_exec(allowed_ext);
+
+        RectTransform rt_bttn = bttn_prefab.GetComponent<RectTransform>();
         
-
-        int posx = -100;
-        int posy = 10;
-
-        //UnityEngine.Debug.Log(gamepath);
-        //UnityEngine.Debug.Log(Directory.GetDirectories(gamepath));
-        //Button btn = bttn_prefab.GetComponent<Button>();
-        //btn.onClick.AddListener(Test);
-
-        foreach (string folder in Directory.GetDirectories(gamepath)){
-            //UnityEngine.Debug.Log(Path.Combine(gamepath, folder));
-            foreach(string file in Directory.GetFiles(Path.Combine(gamepath, folder)))
-            {
-                string ext = Path.GetExtension(file);
-                if (!allowed_ext.Contains(ext))
-                {
-                    UnityEngine.Debug.Log("not valid ext: " + ext);
-                    continue;
-                }
-                posy -= 6;
-                if (posy < -100)
-                {
-                    UnityEngine.Debug.Log("new row");
-                    posy = 10;
-                    posx += 100;
-                }
-                //string path = Path.Combine(gamepath, folder, file);
-                string[] directories = file.Split(Path.DirectorySeparatorChar);
-                //var last = directories.Last();
-                //UnityEngine.Debug.Log(directories[2]);
-                //string filename = file[1];
-                GameObject bttn = Instantiate(bttn_prefab, parent.transform);
-                bttn.GetComponentInChildren<TextMeshProUGUI>().text = Path.GetFileNameWithoutExtension(directories[2]);
-                //bttn.AddComponent(Button);
-                Button btn = bttn.GetComponent<Button>();
-                btn.onClick.AddListener(() => Start_Process(file));
-                //btn.onClick.AddListener(Test);
-
-                //var targetinfo = UnityEvent.GetValidMethodInfo(myScriptInstance, "OnButtonClick", new Type[] { typeof(GameObject) });
-                //UnityAction methodDelegate = Delegate.CreateDelegate(typeof(UnityAction), this, targetInfo) as UnityAction;
-                //UnityEditor.Events.UnityEventTools.AddPersistentListener(btn.onClick, methodDelegate);
+        Build_menu(filepaths, button_height: rt_bttn.rect.height/10f);
 
 
-                //UnityEngine.Debug.Log(btn);
-                bttn.transform.position = new Vector3(0, posy, posx);
-            }
-            //string[] filePaths = Directory.GetFiles(Path.Combine(gamepath, folder));
-            //UnityEngine.Debug.Log(posy);
-            
-        }
-
-        
 
 
 
@@ -91,40 +48,96 @@ public class Import_games : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //UnityEngine.Debug.Log(EventSystem.current);
-        //if (Input.GetKeyDown(key))
-        //{
-        //    EventSystem.current.SetSelectedGameObject(this.gameObject);
-        //}
     }
 
-    public UnityEngine.Events.UnityAction Start_Process(string path)
+    public void Start_Process(string path)
     {
         UnityEngine.Debug.Log("executing " + path);
-        //var ext = Path.GetExtension(path);
-        //string command = "";
-        //switch (ext)
-        //{
-        //    case ".txt":
-        //        command = "notepad";
-        //        break;
-
-
-        //}
-
-        //ProcessStartInfo proc_start_info = new ProcessStartInfo("cmd", "/c " + command);
-        //proc_start_info.CreateNoWindow = true;
-        //Process proc = new Process();
-        //proc.StartInfo = proc_start_info;
         Process.Start(@path);
-        return null;
-    }
-    void Test()
-    {
-        UnityEngine.Debug.Log("bttn pressed");
         //return null;
     }
+    //void Test()
+    //{
+    //    UnityEngine.Debug.Log("bttn pressed");
+    //}
 
 
+    static List<string> Get_files_to_exec(List<string> allowed_ext)
+    {
+        string gamepath = Path.Combine(@"P:", "Python");
+        List<string> filepaths = new List<string>();
+
+
+        foreach (string folder in Directory.GetDirectories(gamepath))
+        {
+            //UnityEngine.Debug.Log(Path.Combine(gamepath, folder));
+            foreach (string file in Directory.GetFiles(Path.Combine(gamepath, folder)))
+            {
+                string ext = Path.GetExtension(file);
+                if (allowed_ext.Contains(ext))
+                {
+                    filepaths.Add(file);
+                    
+                }
+                //else
+                //{
+                //    UnityEngine.Debug.Log("not valid ext: " + ext);
+                //}
+            }
+        }
+        return filepaths;
+    }
+
+    void Build_menu(List<string> filepaths, int max_rows = 10, int max_columns = 5, float button_height = 2f)
+    {
+        //int worldspace_to_pixel_ration = 10;
+        RectTransform rt_canv = camera.GetComponent<RectTransform>();
+        float camera_height = 2f * camera.orthographicSize;
+        float useable_height = camera_height - camera_height / 10;
+        float camera_width = camera_height * camera.aspect;
+        int len = filepaths.Count;
+        int used_colums = (len / max_rows)+1;
+        float x_intervall = camera_width / (used_colums+1);
+        UnityEngine.Debug.Log(camera_width);
+        float y_intervall = useable_height / (max_rows+1);
+        float posx, posy, cur_col, cur_row;
+        Vector3 pos;
+        //UnityEngine.Debug.Log("len: "+len+ " , float: "+(len / max_rows)+ " col: "+used_colums);
+        if (used_colums > max_columns)
+        {
+            used_colums = max_columns;
+        }
+        
+        
+        int i = 0;
+        //int curr_row = 1;
+
+        foreach (string file in filepaths)
+        {
+            
+            cur_col = (i / max_rows + 1);
+            posx = x_intervall * cur_col - camera_width / 2;
+            cur_row = i % max_rows + 1;
+            posy = ((cur_row * y_intervall) - (camera_height));
+            //UnityEngine.Debug.Log(posx);
+
+            //posy -= 6;
+            //if (posy < -100)
+            //{
+            //    UnityEngine.Debug.Log("new row");
+            //    posy = 10;
+            //    posx += 100;
+            //}
+            string[] directories = file.Split(Path.DirectorySeparatorChar);
+            GameObject bttn = Instantiate(bttn_prefab, parent.transform);
+            bttn.GetComponentInChildren<TextMeshProUGUI>().text = Path.GetFileNameWithoutExtension(directories[2]);
+            Button btn = bttn.GetComponent<Button>();
+            btn.onClick.AddListener(() => Start_Process(file));
+            //pos = camera.ScreenToWorldPoint(new Vector3(posx, posy, 0));
+            bttn.transform.position = new Vector3(posx, posy, -1);
+
+            i++;
+        }
+    }
 
 }
