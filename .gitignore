@@ -1,6 +1,3 @@
-
-*.log
-*.csproj
-Game Selector/Assembly-CSharp.csproj
-*.sln
+/[Gg]ames/
+/Game_Selector/
 *.log
