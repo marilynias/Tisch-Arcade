@@ -55,6 +55,8 @@ namespace GameMenuMono
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
+            
+
 
 
             // TODO: Add your update logic here
@@ -72,16 +74,18 @@ namespace GameMenuMono
 
             _spriteBatch.Begin();
             _spriteBatch.Draw(background, new Rectangle(0, 0, 800, 480), Color.White);
-            _spriteBatch.DrawString(BttnFont, BttnText, new Vector2(100, 100), Color.White);
-            var fps = smartFPS.framerate;
+            //_spriteBatch.DrawString(BttnFont, BttnText, new Vector2(100, 100), Color.White);
+            //var fps = smartFPS.framerate;
+            _spriteBatch.DrawString(BttnFont, Math.Round(smartFPS.framerate, 4).ToString(), new Vector2(20, 20), Color.Red);
             int height = 100;
             foreach (Menu.Button bttn in bttnlist)
             {
                 _spriteBatch.DrawString(BttnFont, bttn.bttnName, new Vector2(400, height), Color.White);
                 height += 15;
             }
-            
 
+            if (Keyboard.GetState().IsKeyDown(Keys.Up))
+                _spriteBatch.DrawString(BttnFont, "UP", new Vector2(40, 40), Color.Red);
 
             _spriteBatch.End();
 

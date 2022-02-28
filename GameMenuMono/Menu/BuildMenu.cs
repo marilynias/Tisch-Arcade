@@ -42,8 +42,8 @@ namespace GameMenuMono.Menu
         private static List<string> Get_files_to_exec(List<string> allowed_ext)
         {
             //string gamepath = Path.Combine(@"..\\games");
-            string gamepath = Path.Combine(Directory.GetCurrentDirectory(), "games");
-            //string gamepath = "P:\\Python";
+            //string gamepath = Path.Combine(Directory.GetCurrentDirectory(), "games");
+            string gamepath = "P:\\Python";
             List<string> filepaths = new List<string>();
 
 
