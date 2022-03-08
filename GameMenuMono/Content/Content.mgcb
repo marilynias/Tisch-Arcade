@@ -13,12 +13,26 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin UI/Font/Arial.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:UI/Font/Arial.spritefont;UI/Font/Arial_12.spritefont
+
 #begin UI/Font/BttnFont.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
-/build:UI/Font/BttnFont.spritefont
+/build:UI/Font/BttnFont.spritefont;UI/Font/VT323_12.spritefont
+
+#begin UI/Font/TitleFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:UI/Font/TitleFont.spritefont
 
 #begin UI/Sprites/background-g2cda91ed1_1920.jpg
 /importer:TextureImporter
@@ -30,7 +44,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:UI/Sprites/background-g2cda91ed1_1920.jpg;UI/Sprites/background_01.jpg
+/build:UI/Sprites/background-g2cda91ed1_1920.jpg;UI/Sprites/Background_01.jpg
 
 #begin UI/Sprites/Button.png
 /importer:TextureImporter

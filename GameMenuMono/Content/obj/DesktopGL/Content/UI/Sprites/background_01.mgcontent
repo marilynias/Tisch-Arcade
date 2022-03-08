@@ -2,8 +2,8 @@
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <SourceFile>C:/Users/africk/Documents/GitHub/Tisch-Arcade/GameMenuMono/Content/UI/Sprites/background-g2cda91ed1_1920.jpg</SourceFile>
   <SourceTime>2022-01-14T10:48:28.9200209+01:00</SourceTime>
-  <DestFile>C:/Users/africk/Documents/GitHub/Tisch-Arcade/GameMenuMono/Content/bin/DesktopGL/Content/UI/Sprites/background_01.xnb</DestFile>
-  <DestTime>2022-02-23T11:50:55.2358182+01:00</DestTime>
+  <DestFile>C:/Users/africk/Documents/GitHub/Tisch-Arcade/GameMenuMono/Content/bin/DesktopGL/Content/UI/Sprites/Background_01.xnb</DestFile>
+  <DestTime>2022-02-28T13:56:36.8637543+01:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2020-08-10T18:17:54+02:00</ImporterTime>
   <Processor>TextureProcessor</Processor>

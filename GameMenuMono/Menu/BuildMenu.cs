@@ -10,12 +10,14 @@ namespace GameMenuMono.Menu
 {
     class BuildMenu
     {
-        public static Texture2D img;
+        public Texture2D img;
+        private SpriteFont bttnfont;
 
-        public static List<Button> Build(Texture2D _img, Rectangle window_rect)
+        public List<Button> Build(Texture2D _img, Rectangle window_rect, SpriteFont _bttnfont)
         {
-            
+
             // vars
+            bttnfont = _bttnfont;
             string[] a_ext = { ".py", ".txt" };
             string bttnText;
             List<string> allowed_ext = new List<string>(a_ext);
@@ -39,11 +41,11 @@ namespace GameMenuMono.Menu
 
 
 
-        private static List<string> Get_files_to_exec(List<string> allowed_ext)
+        private List<string> Get_files_to_exec(List<string> allowed_ext)
         {
             //string gamepath = Path.Combine(@"..\\games");
-            //string gamepath = Path.Combine(Directory.GetCurrentDirectory(), "games");
-            string gamepath = "P:\\Python";
+            string gamepath = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).ToString(), "games");
+            //string gamepath = "P:\\Python";
             List<string> filepaths = new List<string>();
 
 
@@ -77,7 +79,7 @@ namespace GameMenuMono.Menu
             //return null;
         }
 
-        static List<Button> Build_menu(List<string> filepaths, Rectangle window_rect, int max_rows = 10, int max_columns = 5, float button_height = 12f)
+        List<Button> Build_menu(List<string> filepaths, Rectangle window_rect, int max_rows = 10, int max_columns = 5, float button_height = 12f)
         {
             List<Button> buttons = new List<Button>();
             
@@ -111,8 +113,8 @@ namespace GameMenuMono.Menu
                 cur_col = (i / max_rows + 1);
                 cur_row = i % max_rows + 1;
                 // make sure its Ordered top to bottom left to right
-                posx = (x_intervall * cur_col) - camera_width;
-                posy = -(cur_row * y_intervall);
+                posx = (x_intervall * cur_col);
+                posy = (cur_row * y_intervall);
 
                 //string[] directories = file.Split(Path.DirectorySeparatorChar);
                 string bttnName = Path.GetFileName(file);
@@ -122,7 +124,7 @@ namespace GameMenuMono.Menu
                 //Button btn = bttn.GetComponent<Button>();
                 //btn.onClick.AddListener(() => Start_Process(file));
                 Action showMethod = () => Process.Start(@file);
-                var bttn = new Button { bttnName = bttnName, gamePath = file, img = img, position = new Vector2(posx, posy), onclick = showMethod };
+                var bttn = new Button { bttnName = bttnName, gamePath = file, img = img, position = new Vector2(posx, posy), onclick = showMethod, BttnFont = bttnfont};
                 buttons.Add(bttn);
                 //if (i == 0)
                 //{

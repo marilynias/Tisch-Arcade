@@ -4,13 +4,17 @@
   <Platform>DesktopGL</Platform>
   <Config />
   <SourceFiles>
+    <File>C:/Users/africk/Documents/GitHub/Tisch-Arcade/GameMenuMono/Content/UI/Font/Arial.spritefont</File>
     <File>C:/Users/africk/Documents/GitHub/Tisch-Arcade/GameMenuMono/Content/UI/Font/BttnFont.spritefont</File>
+    <File>C:/Users/africk/Documents/GitHub/Tisch-Arcade/GameMenuMono/Content/UI/Font/TitleFont.spritefont</File>
     <File>C:/Users/africk/Documents/GitHub/Tisch-Arcade/GameMenuMono/Content/UI/Sprites/background-g2cda91ed1_1920.jpg</File>
     <File>C:/Users/africk/Documents/GitHub/Tisch-Arcade/GameMenuMono/Content/UI/Sprites/Button.png</File>
   </SourceFiles>
   <DestFiles>
+    <File>UI/Font/Arial_12.spritefont</File>
+    <File>UI/Font/VT323_12.spritefont</File>
     <File xsi:nil="true" />
-    <File>UI/Sprites/background_01.jpg</File>
+    <File>UI/Sprites/Background_01.jpg</File>
     <File xsi:nil="true" />
   </DestFiles>
 </SourceFileCollection>
