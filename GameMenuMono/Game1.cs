@@ -33,8 +33,6 @@ namespace GameMenuMono
             IsMouseVisible = true;
             _graphics.SynchronizeWithVerticalRetrace = false;
             this.IsFixedTimeStep = false;
-            //var dd = new GraphicsDevice
-
         }
 
         protected override void Initialize()
@@ -44,6 +42,7 @@ namespace GameMenuMono
             _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
             _graphics.ToggleFullScreen();
             windowRect = this.Window.ClientBounds;
+            this.Window.Title = "Arcade Menu";
             base.Initialize();
             
         }
@@ -52,6 +51,7 @@ namespace GameMenuMono
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             graphicsDevice = GraphicsDevice;
+
             // TODO: use this.Content to load your game content here
             Font = Content.Load<SpriteFont>("UI/Font/VT323_12");
             titleFont = Content.Load<SpriteFont>("UI/Font/TitleFont");
@@ -85,14 +85,10 @@ namespace GameMenuMono
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
-
             _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
-
             _spriteBatch.Draw(background, new Rectangle(0, 0, windowRect.Width, windowRect.Height), Color.White);
             _spriteBatch.DrawString(Font, Math.Round(smartFPS.framerate, 4).ToString(), new Vector2(20, 20), Color.Red);
             menu.Draw(_spriteBatch);
-            //if (Keyboard.GetState().IsKeyDown(Keys.Up))
-            //    _spriteBatch.DrawString(Font, "UP", new Vector2(40, 40), Color.Red);
             _spriteBatch.End();
 
             base.Draw(gameTime);
@@ -102,8 +98,26 @@ namespace GameMenuMono
         {
             string[] a_ext = { ".py", ".txt" };
             List<string> allowed_ext = new List<string>(a_ext);
+            string gamepath;
 
-            string gamepath = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).ToString(), "games");
+            // Spiele ausführbar machen
+            if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
+            {
+                gamepath = Path.Combine(Path.DirectorySeparatorChar.ToString(), "home", "arcade", "Arcade", "games");
+                var p = new Process();
+                p.StartInfo.UseShellExecute = false;
+                p.StartInfo.FileName = "bash";
+                p.StartInfo.Arguments = "-c 'for file in /home/arcade/Arcade/games/*/*.* ; do dos2unix \"$file\" \"$file\"; chmod +x \"$file\"; done'";
+                p.StartInfo.RedirectStandardOutput = true;
+                p.Start();
+                //while (!p.StandardOutput.EndOfStream)
+                //{
+                //    string line = p.StandardOutput.ReadLine();
+                //    Console.WriteLine(line);
+                //}
+            }
+            else
+                gamepath = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).ToString(), "games");
             List<string> filepaths = new List<string>();
 
             foreach (string folder in Directory.GetDirectories(gamepath))
@@ -114,7 +128,7 @@ namespace GameMenuMono
                     string ext = Path.GetExtension(file);
                     if (allowed_ext.Contains(ext))
                     {
-                        string bttnName = Path.GetFileName(file);
+                        string bttnName = Path.GetFileNameWithoutExtension(file);
                         Action showMethod = () => runExecutable(file);
                         menu.AddWidget(Title: bttnName, stringvar: file, onclick: showMethod, Font: Font, size: new Vector2(200, 50));
 
@@ -130,12 +144,26 @@ namespace GameMenuMono
             p.StartInfo.FileName = file; 
             p.Start();
             p.WaitForExit();
-            //_graphics.ToggleFullScreen();
-            //_graphics.ApplyChanges();
-            //System.Threading.Thread.Sleep(100);
+
+            // Fenster wieder in den Vordergrund holen
+            if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
+            {
+                var ps = new Process();
+                ps.StartInfo.UseShellExecute = false;
+                ps.StartInfo.FileName = "bash";
+                ps.StartInfo.Arguments = "-c 'xdotool search \"Arcade Menu\" windowactivate --sync key --clearmodifiers ctrl+l'";
+                ps.StartInfo.RedirectStandardOutput = true;
+                ps.Start();
+                while (!ps.StandardOutput.EndOfStream)
+                {
+                    string line = ps.StandardOutput.ReadLine();
+                    Console.WriteLine(line);
+                }
+            }
+
 
         }
-        
+
 
     }
 }
