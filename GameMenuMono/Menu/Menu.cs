@@ -23,11 +23,16 @@ namespace GameMenuMono.Menu
         private Widget _title;
         private int _borderwidth;
         private Color _selectedColor;
+        private float _offsetCenter;
+        private Rectangle _sampleImageRect;
+
+        //private Texture2D _sampleImage;
+
 
         private KeyboardState previouKeyboardsState;
         private GamePadState previousGamePadState;
 
-        public Menu(SpriteFont font, SpriteFont titleFont, Texture2D img = null, List<Widget> widgets = null, int max_rows = 15, int max_columns = 5, string titleText = "", int borderwidth = 4, Color selectedColor = default(Color))
+        public Menu(SpriteFont font, SpriteFont titleFont, Texture2D img = null, List<Widget> widgets = null, int max_rows = 15, int max_columns = 5, string titleText = "", int borderwidth = 4, Color selectedColor = default(Color), float offsetCenter = 1f)
         {
             SpriteFont Font = font;
             if (widgets == null)
@@ -38,19 +43,21 @@ namespace GameMenuMono.Menu
             _Max_columns = max_columns;
             _borderwidth = borderwidth;
             _selectedColor = selectedColor;
+            _offsetCenter = offsetCenter;
 
             _Font = font;
             _title = AddTitle(titleText, titleFont);
 
         }
 
-        public Widget AddWidget(String Title = "", string stringvar = null, Texture2D img = null, Action onclick = null, SpriteFont Font = null, Vector2 size = default(Vector2))
+        public Widget AddWidget(String Title = "", string stringvar = null, Texture2D img = null, Action onclick = null, SpriteFont Font = null, Vector2 size = default(Vector2), Texture2D icon = null, Texture2D sampleImage = null)
         {
             if (Font == null)
                 Font = _Font;
 
-            Widget widget = new Widget(Title: Title, stringvar: stringvar, img: img, onclick: onclick, Font: Font, size: size, borderwidth: _borderwidth, selectedColor: _selectedColor);
+            Widget widget = new Widget(Title: Title, stringvar: stringvar, img: img, onclick: onclick, Font: Font, size: size, borderwidth: _borderwidth, selectedColor: _selectedColor, icon: icon, _sampleImage: sampleImage);
             Widgets.Add(widget);
+            GenerateScrolling();
             return widget;
         }
 
@@ -58,11 +65,15 @@ namespace GameMenuMono.Menu
         {
             _title.Draw(sb);
 
+            if (_selected.sampleImage != null)
+                sb.Draw(_selected.sampleImage, _sampleImageRect, Color.White);
+
             foreach (var widget in Widgets)
             {
                 widget.Draw(sb);
-
             }
+
+            
         }
 
         public void Update(GamePadState gamePadState, KeyboardState keyboardstate)
@@ -72,7 +83,7 @@ namespace GameMenuMono.Menu
             {
                 // Get the current state of Controller1
 
-                Console.WriteLine(capabilities.GamePadType);
+                //Console.WriteLine(capabilities.GamePadType);
 
                 // You can check explicitly if a gamepad has support for a certain feature
                 if (capabilities.HasLeftXThumbStick)
@@ -115,7 +126,7 @@ namespace GameMenuMono.Menu
             if (keyboardstate.IsKeyDown(Keys.Enter) & !previouKeyboardsState.IsKeyDown(Keys.Enter))
                 _selected.onReturn.Invoke();
             previouKeyboardsState = keyboardstate;
-            GenerateScrolling();
+            
 
         }
 
@@ -220,43 +231,43 @@ namespace GameMenuMono.Menu
 
         private void GenerateScrolling()
         {
-            float top;
+            SelectWidget(Widgets[0]);
+
+            float top, posx, posy;              
             if (_title != null)
-                top = _title.GetRectangle().Bottom;
+                top = _title.GetRectangle().Bottom;         // top of usable screen
             else
                 top = 0;
             float useable_height = Game1.windowRect.Height - top;
-            float useable_width = Game1.windowRect.Width;
+            Vector2 center = new Vector2(Game1.windowRect.Width / 2, (useable_height / 2) + top);
             int len = Widgets.Count;
+
             float yIntervall = Widgets[0].GetRectangle().Height + 10;
-            int numVisibleWidgets = Convert.ToInt32(Math.Floor(useable_height / yIntervall / 2));
-            SelectWidget(Widgets[0]);
-            float posx, posy;
+            int HalfVisibleWidgets = Convert.ToInt32(Math.Floor(useable_height / yIntervall / 2));
+            
 
-            float middle = (useable_height / 2) + (Game1.windowRect.Height - useable_height) - yIntervall;
-
-            // Generate menu in fading row
+            // Generate menu in fading single row
             for (int i = 0; i <= len - 1; i++)
             {
                 int ind;
                 float alpha;
-                if (i <= numVisibleWidgets)
+                if (i <= HalfVisibleWidgets)             // from the middle Down
                 {
                     ind = i;
-                    posy = middle + (i * yIntervall);
-                    alpha = (float)Math.Abs(i) / numVisibleWidgets;
+                    posy = center.Y + (i * yIntervall) - yIntervall;
+                    alpha = (float)Math.Abs(i) / HalfVisibleWidgets;
                 }
-                else
+                else                                    // from the middle up
                 {
-                    ind = len - (i - numVisibleWidgets);
-                    posy = middle - ((i - numVisibleWidgets) * yIntervall);
-                    alpha = (float)Math.Abs(i - numVisibleWidgets) / numVisibleWidgets;
+                    ind = len - (i - HalfVisibleWidgets);
+                    posy = center.Y - ((i - HalfVisibleWidgets) * yIntervall) - yIntervall;
+                    alpha = (float)Math.Abs(i - HalfVisibleWidgets) / HalfVisibleWidgets;
                 }
 
-                if (i <= numVisibleWidgets * 2)
+                if (i <= HalfVisibleWidgets * 2)         // draw only visible Widgets
                 {
                     Rectangle rect = Widgets[ind].GetRectangle();
-                    posx = useable_width / 2 - rect.Width / 2;
+                    posx = center.X * _offsetCenter - rect.Width / 2;
 
                     Widgets[ind].SetAlpha(1 - alpha);
                     Widgets[ind].SetPosition(new Vector2(posx, posy));
@@ -266,13 +277,22 @@ namespace GameMenuMono.Menu
                     Widgets[ind].isEnabled = false;
             }
 
+            // Get the Size and Position of the Preview Image of the selected game, if it has one
+            if (_selected.sampleImage != null)
+            {
+                float scale = useable_height / Math.Max(_selected.sampleImage.Width, _selected.sampleImage.Height); //by how much does the image need to scale down (while keeping its proportions) to fit Vertically in the Window
+                if (_selected.sampleImage.Width > center.X)                                // Dont let the image go past the middle point
+                    scale = center.X / _selected.sampleImage.Width  ;
+                Vector2 newImgSize = new Vector2(_selected.sampleImage.Width * scale, _selected.sampleImage.Height * scale);      // final image size scaled down / up
+
+                _sampleImageRect = new Rectangle(   Math.Max(Convert.ToInt32(center.X / _offsetCenter * 0.8 - newImgSize.X/2), 0), Convert.ToInt32(center.Y - (newImgSize.Y / 2)),
+                                                    Convert.ToInt32(newImgSize.X), Convert.ToInt32(newImgSize.Y));
+            }
+
+            
 
         }
 
-        private void UpdateWidgets()
-        {
-            //TODO: Da Positionen bekannt sind, nur Widges ändern
-        }
 
         private void CtrlLeft()
         {
@@ -289,6 +309,7 @@ namespace GameMenuMono.Menu
             var last = Widgets[Widgets.Count - 1];
             Widgets.RemoveAt(Widgets.Count - 1);
             Widgets.Insert(0, last);
+            GenerateScrolling();
             //SelectWidget(GetWidgetAt(_selected.column, _selected.row - 1)); 
         }
         
@@ -297,6 +318,7 @@ namespace GameMenuMono.Menu
             var first = Widgets[0];
             Widgets.RemoveAt(0);
             Widgets.Add(first);
+            GenerateScrolling();
             //SelectWidget(GetWidgetAt(_selected.column, _selected.row + 1));
         }
             
