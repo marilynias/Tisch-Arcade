@@ -1,5 +1,7 @@
 # Tisch-Arcade
 
+Das Project basiert auf Monogame
+
 ## Voraussetzungen
 
 Sogenannte „shebang“ an den Anfang der Script-Datei hinzufügen (bestimmen mit welchem Programm das Spiel auszuführen ist)
