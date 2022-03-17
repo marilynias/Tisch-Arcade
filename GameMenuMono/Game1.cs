@@ -1,11 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Audio;
 using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Diagnostics;
-using UnidecodeSharpFork;
 
 //using System.Runtime.InteropServices;
 
@@ -17,6 +17,8 @@ namespace GameMenuMono
         private SpriteBatch _spriteBatch;
         public SpriteFont Font;
         public SpriteFont titleFont;
+        public static SoundEffect soundMenuMove;
+        public static SoundEffect soundMenuSelect;
         private Texture2D background;
         private Texture2D bttnimg;
         public static Rectangle windowRect;
@@ -32,6 +34,7 @@ namespace GameMenuMono
         {
             
             _graphics = new GraphicsDeviceManager(this);
+            //graphicsDevice
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
             _graphics.SynchronizeWithVerticalRetrace = false;
@@ -46,7 +49,7 @@ namespace GameMenuMono
             //_graphics.PreferredBackBufferHeight = 1024;//GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
             _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
             _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-            _graphics.ToggleFullScreen();
+            //_graphics.ToggleFullScreen();
             _graphics.ApplyChanges();
             windowRect = this.Window.ClientBounds;
             
@@ -65,6 +68,10 @@ namespace GameMenuMono
             Font = Content.Load<SpriteFont>("UI/Font/VT323_12");
             titleFont = Content.Load<SpriteFont>("UI/Font/TitleFont");
             background = Content.Load<Texture2D>("UI/Sprites/background_01");
+
+            soundMenuMove = Content.Load<SoundEffect>("UI/Sounds/Menu__005");
+            soundMenuSelect = Content.Load<SoundEffect>("UI/Sounds/Menu__008");
+
             float bgScaleFactor = background.Height / windowRect.Height;        //how much does the image need to scale up/down to fit Vertically
             _bgRect = new Rectangle((   windowRect.Width-background.Width)/2, 0, //scale the image, to fit the screen, while keeping its ratio
                                         Convert.ToInt32(Math.Ceiling(background.Width * bgScaleFactor)), Convert.ToInt32(Math.Ceiling(background.Height * bgScaleFactor)));
@@ -128,6 +135,7 @@ namespace GameMenuMono
             }
             else
                 gamepath = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).ToString(), "games");
+            
             List<string> filepaths = new List<string>();
 
             //scan games Folder for other Folders and Prepare Vars
@@ -176,7 +184,7 @@ namespace GameMenuMono
             p.Start();
             p.WaitForExit();
 
-            // Fenster wieder in den Vordergrund holen
+            // Fenster wieder in den Vordergrund holen mit xdotool
             if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
             {
                 var ps = new Process();
@@ -194,7 +202,6 @@ namespace GameMenuMono
 
 
         }
-
 
     }
 }

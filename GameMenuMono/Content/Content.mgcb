@@ -34,6 +34,42 @@
 /processorParam:TextureFormat=Compressed
 /build:UI/Font/TitleFont.spritefont
 
+#begin UI/Sounds/Menu__005.ogg
+/importer:OggImporter
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:UI/Sounds/Menu__005.ogg
+
+#begin UI/Sounds/Menu__005.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:UI/Sounds/Menu__005.wav
+
+#begin UI/Sounds/Menu__008.ogg
+/importer:OggImporter
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:UI/Sounds/Menu__008.ogg
+
+#begin UI/Sounds/Menu__008.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:UI/Sounds/Menu__008.wav
+
+#begin UI/Sounds/Menu__010.ogg
+/importer:OggImporter
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:UI/Sounds/Menu__010.ogg
+
+#begin UI/Sounds/Menu__010.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:UI/Sounds/Menu__010.wav
+
 #begin UI/Sprites/background-g2cda91ed1_1920.jpg
 /importer:TextureImporter
 /processor:TextureProcessor

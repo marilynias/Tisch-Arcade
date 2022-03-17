@@ -101,8 +101,10 @@ namespace GameMenuMono.Menu
 
                 if (capabilities.HasAButton)
                 {
-                    if (gamePadState.IsButtonDown(Buttons.X) & !previousGamePadState.IsButtonDown(Buttons.X))
-                        _selected.onReturn.Invoke();
+                    if (gamePadState.IsButtonDown(Buttons.B) & !previousGamePadState.IsButtonDown(Buttons.B) || gamePadState.IsButtonDown(Buttons.Y) & !previousGamePadState.IsButtonDown(Buttons.Y))
+                        CtrlSelect();
+
+                    //System.Diagnostics.Debug.WriteLine(gamePadState.Buttons);
                 }
 
 
@@ -124,7 +126,7 @@ namespace GameMenuMono.Menu
             else if (keyboardstate.IsKeyDown(Keys.Right) & !previouKeyboardsState.IsKeyDown(Keys.Right))
                 CtrlRight();
             if (keyboardstate.IsKeyDown(Keys.Enter) & !previouKeyboardsState.IsKeyDown(Keys.Enter))
-                _selected.onReturn.Invoke();
+                CtrlSelect();
             previouKeyboardsState = keyboardstate;
             
 
@@ -297,11 +299,13 @@ namespace GameMenuMono.Menu
         private void CtrlLeft()
         {
             //SelectWidget(GetWidgetAt(_selected.column - 1, _selected.row));
+            //Game1.soundMenuMove.Play();
         }
-            
+
         private void CtrlRight()
         {
             //SelectWidget(GetWidgetAt(_selected.column + 1, _selected.row));
+            //Game1.soundMenuMove.Play();
         }
 
         private void CtrlUp()
@@ -309,6 +313,7 @@ namespace GameMenuMono.Menu
             var last = Widgets[Widgets.Count - 1];
             Widgets.RemoveAt(Widgets.Count - 1);
             Widgets.Insert(0, last);
+            Game1.soundMenuMove.Play();
             GenerateScrolling();
             //SelectWidget(GetWidgetAt(_selected.column, _selected.row - 1)); 
         }
@@ -318,9 +323,17 @@ namespace GameMenuMono.Menu
             var first = Widgets[0];
             Widgets.RemoveAt(0);
             Widgets.Add(first);
+            Game1.soundMenuMove.Play();
             GenerateScrolling();
             //SelectWidget(GetWidgetAt(_selected.column, _selected.row + 1));
         }
             
+        private void CtrlSelect()
+        {
+            Game1.soundMenuSelect.Play();
+            
+            //_selected.onReturn.Invoke();
+            
+        }
     }
 }
