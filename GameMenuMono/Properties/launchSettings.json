@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "GameMenuMono": {
+      "commandName": "Project",
+      "commandLineArgs": "-NoMakeExecuteable"
+    }
+  }
+}

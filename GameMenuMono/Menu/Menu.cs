@@ -32,7 +32,19 @@ namespace GameMenuMono.Menu
         private KeyboardState previouKeyboardsState;
         private GamePadState previousGamePadState;
 
-        public Menu(SpriteFont font, SpriteFont titleFont, Texture2D img = null, List<Widget> widgets = null, int max_rows = 15, int max_columns = 5, string titleText = "", int borderwidth = 4, Color selectedColor = default(Color), float offsetCenter = 1f)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Menu"/> class.
+        /// </summary>
+        /// <param name="font">The font for its widgets.</param>
+        /// <param name="titleFont">The title font.</param>
+        /// <param name="widgets">List of the widgets.</param>
+        /// <param name="max_rows">The maximum amount of rows.</param>
+        /// <param name="max_columns">The maximum amount of columns.</param>
+        /// <param name="titleText">The title to be shown.</param>
+        /// <param name="borderwidth">The borderwidth for the widgets.</param>
+        /// <param name="selectedColor">Color of the selected widget.</param>
+        /// <param name="offsetCenter">The horizontal(x) offset from the center. Can be negative</param>
+        public Menu(SpriteFont font, SpriteFont titleFont, List<Widget> widgets = null, int max_rows = 15, int max_columns = 5, string titleText = "", int borderwidth = 4, Color selectedColor = default, float offsetCenter = 1f)
         {
             SpriteFont Font = font;
             if (widgets == null)
@@ -50,7 +62,19 @@ namespace GameMenuMono.Menu
 
         }
 
-        public Widget AddWidget(String Title = "", string stringvar = null, Texture2D img = null, Action onclick = null, SpriteFont Font = null, Vector2 size = default(Vector2), Texture2D icon = null, Texture2D sampleImage = null)
+        /// <summary>
+        /// Adds the widget.
+        /// </summary>
+        /// <param name="Title">The shown title.</param>
+        /// <param name="stringvar">The variable for a string. (path of game)</param>
+        /// <param name="img">The background image.</param>
+        /// <param name="onclick">What happens when you click the Widget.</param>
+        /// <param name="Font">The font of the widget.</param>
+        /// <param name="size">The size of the widget.</param>
+        /// <param name="icon">The icon.</param>
+        /// <param name="sampleImage">The sample image.</param>
+        /// <returns></returns>
+        public Widget AddWidget(String Title = "", string stringvar = null, Texture2D img = null, Action onclick = null, SpriteFont Font = null, Vector2 size = default, Texture2D icon = null, Texture2D sampleImage = null)
         {
             if (Font == null)
                 Font = _Font;
@@ -61,6 +85,10 @@ namespace GameMenuMono.Menu
             return widget;
         }
 
+        /// <summary>
+        /// Draws the menu with the specified spritebatch.
+        /// </summary>
+        /// <param name="sb">The sb.</param>
         public void Draw(SpriteBatch sb)
         {
             _title.Draw(sb);
@@ -76,8 +104,17 @@ namespace GameMenuMono.Menu
             
         }
 
-        public void Update(GamePadState gamePadState, KeyboardState keyboardstate)
+        /// <summary>
+        /// Checks pressed keys
+        /// </summary>
+        /// <param name="gamepadState">Optional: State of the gamepad.</param>
+        /// <param name="keyboardState">Optional: State of the keyboard.</param>
+        public void Update(GamePadState gamepadState = default, KeyboardState keyboardState = default)
         {
+            if (gamepadState == default)
+                gamepadState = GamePad.GetState(PlayerIndex.One);
+            if (keyboardState == default)
+                keyboardState = Keyboard.GetState();
             GamePadCapabilities capabilities = GamePad.GetCapabilities(PlayerIndex.One);
             if (capabilities.IsConnected)
             {
@@ -89,19 +126,19 @@ namespace GameMenuMono.Menu
                 if (capabilities.HasLeftXThumbStick)
                 {
                     // Check teh direction in X axis of left analog stick
-                    if (gamePadState.ThumbSticks.Left.X < -0.5f & !(previousGamePadState.ThumbSticks.Left.X < -0.5f))       //left
+                    if (gamepadState.ThumbSticks.Left.X < -0.5f & !(previousGamePadState.ThumbSticks.Left.X < -0.5f))       //left
                         CtrlLeft();
-                    else if (gamePadState.ThumbSticks.Left.X > 0.5f & !(previousGamePadState.ThumbSticks.Left.X > 0.5f))    //right
+                    else if (gamepadState.ThumbSticks.Left.X > 0.5f & !(previousGamePadState.ThumbSticks.Left.X > 0.5f))    //right
                         CtrlRight();
-                    else if (gamePadState.ThumbSticks.Left.Y < -0.5f & !(previousGamePadState.ThumbSticks.Left.Y < -0.5f))  //down
+                    else if (gamepadState.ThumbSticks.Left.Y < -0.5f & !(previousGamePadState.ThumbSticks.Left.Y < -0.5f))  //down
                         CtrlDown();
-                    else if (gamePadState.ThumbSticks.Left.Y > 0.5f & !(previousGamePadState.ThumbSticks.Left.Y > 0.5f))    //up
+                    else if (gamepadState.ThumbSticks.Left.Y > 0.5f & !(previousGamePadState.ThumbSticks.Left.Y > 0.5f))    //up
                         CtrlUp();
                 }
 
                 if (capabilities.HasAButton)
                 {
-                    if (gamePadState.IsButtonDown(Buttons.B) & !previousGamePadState.IsButtonDown(Buttons.B) || gamePadState.IsButtonDown(Buttons.Y) & !previousGamePadState.IsButtonDown(Buttons.Y))
+                    if (gamepadState.IsButtonDown(Buttons.B) & !previousGamePadState.IsButtonDown(Buttons.B) || gamepadState.IsButtonDown(Buttons.Y) & !previousGamePadState.IsButtonDown(Buttons.Y))
                         CtrlSelect();
 
                     //System.Diagnostics.Debug.WriteLine(gamePadState.Buttons);
@@ -110,46 +147,56 @@ namespace GameMenuMono.Menu
 
 
 
-                previousGamePadState = gamePadState;
+                previousGamePadState = gamepadState;
                 // You can also check the controllers "type"
                 //if (capabilities.GamePadType == GamePadType.)
                 //{
                 //}
             }
 
-            if (keyboardstate.IsKeyDown(Keys.Up) & !previouKeyboardsState.IsKeyDown(Keys.Up))
+            if (keyboardState.IsKeyDown(Keys.Up) & !previouKeyboardsState.IsKeyDown(Keys.Up))
                 CtrlUp();
-            else if (keyboardstate.IsKeyDown(Keys.Down) & !previouKeyboardsState.IsKeyDown(Keys.Down))
+            else if (keyboardState.IsKeyDown(Keys.Down) & !previouKeyboardsState.IsKeyDown(Keys.Down))
                 CtrlDown();
-            else if (keyboardstate.IsKeyDown(Keys.Left) & !previouKeyboardsState.IsKeyDown(Keys.Left))
+            else if (keyboardState.IsKeyDown(Keys.Left) & !previouKeyboardsState.IsKeyDown(Keys.Left))
                 CtrlLeft();
-            else if (keyboardstate.IsKeyDown(Keys.Right) & !previouKeyboardsState.IsKeyDown(Keys.Right))
+            else if (keyboardState.IsKeyDown(Keys.Right) & !previouKeyboardsState.IsKeyDown(Keys.Right))
                 CtrlRight();
-            if (keyboardstate.IsKeyDown(Keys.Enter) & !previouKeyboardsState.IsKeyDown(Keys.Enter))
+            if (keyboardState.IsKeyDown(Keys.Enter) & !previouKeyboardsState.IsKeyDown(Keys.Enter))
                 CtrlSelect();
-            previouKeyboardsState = keyboardstate;
+            previouKeyboardsState = keyboardState;
             
 
         }
 
+        /// <summary>
+        /// Gets the selected widget.
+        /// </summary>
+        /// <returns> Returns the selected widget</returns>
         public Widget GetSelected()
         {
             return _selected;
         }
 
-        public Widget GetWidgetAt(int x, int y)
+        /// <summary>
+        /// Gets the widget at the specified colums/row.
+        /// </summary>
+        /// <param name="column">The column.</param>
+        /// <param name="row">The row.</param>
+        /// <returns></returns>
+        public Widget GetWidgetAt(int column, int row)
         {
-            if (x < 1)
-                x = _columns;
-            else if (x > _columns)
-                x = 1;
+            if (column < 1)
+                column = _columns;
+            else if (column > _columns)
+                column = 1;
 
-            if (y < 1)
-                y += _rows;
-            else if (y > _rows)
-                y -= _rows;
+            if (row < 1)
+                row += _rows;
+            else if (row > _rows)
+                row -= _rows;
 
-            int index = ((x - 1) * _rows + y) - 1;
+            int index = ((column - 1) * _rows + row) - 1;
             if (index < 0)
                 index = Widgets.Count - 1;
             else if (index >= Widgets.Count)
@@ -157,6 +204,10 @@ namespace GameMenuMono.Menu
             return Widgets[index];
         }
 
+        /// <summary>
+        /// Selects the specified widget.
+        /// </summary>
+        /// <param name="widget">The widget.</param>
         public void SelectWidget(Widget widget)
         {
             //Widgets.Find(i => i._is_selected == true);
@@ -174,13 +225,25 @@ namespace GameMenuMono.Menu
             _selected._is_selected = true;
         }
 
+        /// <summary>
+        /// Sets the title.
+        /// </summary>
+        /// <param name="title">The title.</param>
         public void SetTitle(string title)
         {
             _title.SetTitle(title);
             GenerateScrolling();
         }
 
-        private Widget AddTitle(string titleText, SpriteFont spriteFont, Texture2D img = null, Vector2 size = default(Vector2))
+        /// <summary>
+        /// Adds the title to the menu.
+        /// </summary>
+        /// <param name="titleText">The title text.</param>
+        /// <param name="spriteFont">The sprite font.</param>
+        /// <param name="img">The img.</param>
+        /// <param name="size">The size.</param>
+        /// <returns>widget for the title</returns>
+        private Widget AddTitle(string titleText, SpriteFont spriteFont, Texture2D img = null, Vector2 size = default)
         {
             Widget title = new Widget(Title: titleText, img: img, Font: spriteFont, size: size, borderwidth: _borderwidth);
             title.SetPosition(new Vector2(Game1.windowRect.Width / 2 - title.GetRectangle().Width / 2, 50));
@@ -231,6 +294,9 @@ namespace GameMenuMono.Menu
             //int i = 0;
         }
 
+        /// <summary>
+        /// Generates the menu as a single row of circling widgets.
+        /// </summary>
         private void GenerateScrolling()
         {
             SelectWidget(Widgets[0]);
@@ -295,19 +361,27 @@ namespace GameMenuMono.Menu
 
         }
 
-
+        /// <summary>
+        /// Controls what happens when left is pressed.
+        /// </summary>
         private void CtrlLeft()
         {
             //SelectWidget(GetWidgetAt(_selected.column - 1, _selected.row));
             //Game1.soundMenuMove.Play();
         }
 
+        /// <summary>
+        /// Controls what happens when right is pressed.
+        /// </summary>
         private void CtrlRight()
         {
             //SelectWidget(GetWidgetAt(_selected.column + 1, _selected.row));
             //Game1.soundMenuMove.Play();
         }
 
+        /// <summary>
+        /// Controls what happens when up is pressed.
+        /// </summary>
         private void CtrlUp()
         {
             var last = Widgets[Widgets.Count - 1];
@@ -317,7 +391,10 @@ namespace GameMenuMono.Menu
             GenerateScrolling();
             //SelectWidget(GetWidgetAt(_selected.column, _selected.row - 1)); 
         }
-        
+
+        /// <summary>
+        /// Controls what happens when down is pressed.
+        /// </summary>
         private void CtrlDown()
         {
             var first = Widgets[0];
@@ -327,12 +404,15 @@ namespace GameMenuMono.Menu
             GenerateScrolling();
             //SelectWidget(GetWidgetAt(_selected.column, _selected.row + 1));
         }
-            
+
+        /// <summary>
+        /// Controls what happens when select is pressed.
+        /// </summary>
         private void CtrlSelect()
         {
             Game1.soundMenuSelect.Play();
             
-            //_selected.onReturn.Invoke();
+            _selected.onReturn.Invoke();
             
         }
     }

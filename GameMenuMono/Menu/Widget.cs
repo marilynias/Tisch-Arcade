@@ -34,12 +34,26 @@ namespace GameMenuMono.Menu
         private int _borderwidth;
         private Color _selectedColor;
         public Texture2D sampleImage;
-        
-        
 
-        public Widget(  string Title = null, string stringvar = null, Texture2D img = null, Vector2 position = default(Vector2), Action onclick = null, 
-                        SpriteFont Font = null, Vector2 size = default(Vector2), Color backgroundColor = default(Color), int borderwidth = 4, 
-                        Color selectedColor = default(Color), Texture2D icon = null, Texture2D _sampleImage = null)
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Widget"/> class.
+        /// </summary>
+        /// <param name="Title">The title.</param>
+        /// <param name="stringvar">Variable for a string.</param>
+        /// <param name="img">The background Image for the Widget.</param>
+        /// <param name="position">The position.</param>
+        /// <param name="onclick">What happens when you click the Widget.</param>
+        /// <param name="Font">The font.</param>
+        /// <param name="size">The size. Default size of the Text</param>
+        /// <param name="backgroundColor">Color of the background.</param>
+        /// <param name="borderwidth">The borderwidth.</param>
+        /// <param name="selectedColor">Color of the selected rectangle.</param>
+        /// <param name="icon">The icon to be shown, if any.</param>
+        /// <param name="_sampleImage">The sample image.</param>
+        public Widget(  string Title = null, string stringvar = null, Texture2D img = null, Vector2 position = default, Action onclick = null, 
+                        SpriteFont Font = null, Vector2 size = default, Color backgroundColor = default, int borderwidth = 4, 
+                        Color selectedColor = default, Texture2D icon = null, Texture2D _sampleImage = null)
         {
             _Title = Title.Unidecode();
             _stringvar = stringvar;
@@ -64,9 +78,6 @@ namespace GameMenuMono.Menu
             _rect = _TextRect;
             if (_icon != null)
                 _rect.Width = _rectIcon.Right - _rect.Left;
-            
-            
-
         }
 
         public void Update()
@@ -74,6 +85,10 @@ namespace GameMenuMono.Menu
 
         }
 
+        /// <summary>
+        /// Draws with the specified spritebatch.
+        /// </summary>
+        /// <param name="sb">The spritebatch with which to draw.</param>
         public void Draw(SpriteBatch sb)
         {
             if (isEnabled)
@@ -83,7 +98,7 @@ namespace GameMenuMono.Menu
                     _pointTexture.SetData(new Color[] { Color.White });
                     DrawRectangle(sb, _rect, _selectedColor, _borderwidth);
                 }
-                else if (_backgroundColor != default(Color))    //draw Background if any is given
+                else if (_backgroundColor != default)    //draw Background if any is given
                 {
                     _pointTexture.SetData(new Color[] { Color.White });
                     sb.Draw(_pointTexture, _rect, _backgroundColor);
@@ -95,6 +110,10 @@ namespace GameMenuMono.Menu
             }
         }
 
+        /// <summary>
+        /// Sets the position.
+        /// </summary>
+        /// <param name="position">The new position.</param>
         public void SetPosition(Vector2 position)               // change Button Position and everythng it entails
         {
             _position = position;
@@ -112,22 +131,40 @@ namespace GameMenuMono.Menu
             //_TextRect.Offset(position);
         }
 
+        /// <summary>
+        /// Gets the rectangle.
+        /// </summary>
+        /// <returns>the Rectangle</returns>
         public Rectangle GetRectangle()
         {
             return _TextRect;
         }
 
+        /// <summary>
+        /// Sets the title.
+        /// </summary>
+        /// <param name="title">The title.</param>
         public void SetTitle(string title)
         {
             _Title = title;
         }
 
+        /// <summary>
+        /// Sets the alpha.
+        /// </summary>
+        /// <param name="alpha">The alpha.</param>
         public void SetAlpha(float alpha)
         {
             _alpha = alpha;
         }
 
-        //static Texture2D _pointTexture;
+        /// <summary>
+        /// Draws the rectangle.
+        /// </summary>
+        /// <param name="spriteBatch">The spritebatch.</param>
+        /// <param name="rectangle">The rectangle to be drawn.</param>
+        /// <param name="color">The color.</param>
+        /// <param name="lineWidth">Width of the rectangle border.</param>
         private void DrawRectangle(SpriteBatch spriteBatch, Rectangle rectangle, Color color, int lineWidth)
         {
             if (_pointTexture == null)
@@ -141,7 +178,11 @@ namespace GameMenuMono.Menu
             spriteBatch.Draw(_pointTexture, new Rectangle(rectangle.X + rectangle.Width, rectangle.Y, lineWidth, rectangle.Height + lineWidth), color);
             spriteBatch.Draw(_pointTexture, new Rectangle(rectangle.X, rectangle.Y + rectangle.Height, rectangle.Width + lineWidth, lineWidth), color);
         }
-    
+
+        /// <summary>
+        /// Gets the rectangle of the icon.
+        /// </summary>
+        /// <returns>Rectangle</returns>
         private Rectangle GetIconRect()
         {
             if (_icon != null)
